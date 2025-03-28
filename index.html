@@ -22,15 +22,11 @@
       font-size: 1.5em;
     }
     .container { padding: 20px; }
-    .import-section {
+    .import-section, .select-section {
       margin-bottom: 20px;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      align-items: center;
     }
     .import-section button,
-    .import-section input[type="url"] {
+    .select-section button {
       background-color: #ADC3D9;
       color: #fff;
       border: none;
@@ -39,11 +35,12 @@
       cursor: pointer;
       font-size: 1em;
     }
-    .import-section button:hover { background-color: #8baabf; }
-    .import-section input[type="url"] {
-      flex: 1;
-      min-width: 250px;
-      color: #000;
+    .import-section button:hover,
+    .select-section button:hover { background-color: #8baabf; }
+    .select-section select {
+      padding: 10px;
+      font-size: 1em;
+      margin-right: 10px;
     }
     .counters {
       margin-bottom: 20px;
@@ -53,22 +50,6 @@
       border-radius: 3px;
       font-size: 0.9em;
     }
-    .zoom-btns {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 20px;
-    }
-    .zoom-btns button {
-      flex: 1;
-      padding: 8px;
-      background-color: #ADC3D9;
-      color: #fff;
-      border: none;
-      border-radius: 3px;
-      cursor: pointer;
-      font-size: 0.9em;
-    }
-    .zoom-btns button:hover { background-color: #8baabf; }
     .main { overflow-x: auto; }
     #gantt { margin-top: 20px; }
     #installButton {
@@ -89,22 +70,32 @@
 <body>
   <header>Gantt</header>
   <div class="container">
+    <!-- Sezione per importazione locale -->
     <div class="import-section">
-      <!-- Caricamento da file locale -->
-      <button id="importJsonButton">Importa Gantt (File Locale)</button>
+      <button id="importJsonButton">Importa Gantt</button>
       <input type="file" id="importJsonInput" accept="application/json" style="display:none">
-      <!-- Caricamento da URL -->
-      <input type="url" id="jsonUrlInput" placeholder="Inserisci URL file JSON">
-      <button id="loadUrlButton">Carica da URL</button>
-      <!-- Pulsanti Zoom -->
       <button id="zoomInButton">Zoom In</button>
       <button id="zoomOutButton">Zoom Out</button>
     </div>
+    <!-- Nuova sezione per caricare JSON dalla repository -->
+    <div class="select-section">
+      <label for="jsonSelect">Carica Gantt da file:</label>
+      <select id="jsonSelect">
+        <option value="">Seleziona un file JSON</option>
+        <option value="gantt-progetto-a.json">Gantt Progetto A</option>
+        <option value="gantt-progetto-b.json">Gantt Progetto B</option>
+        <!-- Aggiungi altre opzioni se necessario -->
+      </select>
+      <button id="loadJsonButton">Carica</button>
+    </div>
+    <!-- Box dei counter -->
     <div class="counters" id="taskCounters"></div>
+    <!-- Contenitore per il Gantt -->
     <div class="main"><div id="gantt"></div></div>
   </div>
   <button id="installButton">Installa App</button>
   
+  <!-- Inclusione delle librerie necessarie -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/frappe-gantt/0.5.0/frappe-gantt.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script>
@@ -112,6 +103,7 @@
     const viewModes = ["Day", "Week", "Month"];
     let currentViewModeIndex = 0;
     
+    // Funzione per renderizzare il Gantt
     function renderGantt() {
       document.getElementById("gantt").innerHTML = "";
       if (tasks.length > 0) {
@@ -132,6 +124,7 @@
       }
     }
     
+    // Funzione per aggiornare i counter
     function updateCounters() {
       const counterDiv = document.getElementById("taskCounters");
       const totalTasks = tasks.length;
@@ -163,7 +156,7 @@
             updateCounters();
             alert("Importazione completata!");
           } else {
-            alert("Il file JSON non contiene un array valido di task.");
+            alert("Il file JSON non contiene un array valido di task. Usare il portale gantt maker | by DF");
           }
         } catch (err) {
           alert("Errore nella lettura del file JSON.");
@@ -172,12 +165,30 @@
       reader.readAsText(file);
     }
     
-    // Funzione per importare JSON da URL
-    function importJSONFromUrl(url) {
-      fetch(url)
+    // Event listeners per importazione locale e zoom
+    document.getElementById("importJsonButton").addEventListener("click", () => {
+      document.getElementById("importJsonInput").click();
+    });
+    document.getElementById("importJsonInput").addEventListener("change", importJSON);
+    document.getElementById("zoomInButton").addEventListener("click", () => {
+      if (currentViewModeIndex > 0) { currentViewModeIndex--; renderGantt(); }
+    });
+    document.getElementById("zoomOutButton").addEventListener("click", () => {
+      if (currentViewModeIndex < viewModes.length - 1) { currentViewModeIndex++; renderGantt(); }
+    });
+    
+    // Caricamento JSON dalla repository tramite il menu a tendina
+    document.getElementById("loadJsonButton").addEventListener("click", () => {
+      const select = document.getElementById("jsonSelect");
+      const selectedFile = select.value;
+      if (!selectedFile) {
+        alert("Seleziona un file JSON!");
+        return;
+      }
+      fetch(selectedFile)
         .then(response => {
           if (!response.ok) {
-            throw new Error("Network response was not ok");
+            throw new Error("Errore nel recuperare il file: " + response.statusText);
           }
           return response.json();
         })
@@ -186,48 +197,18 @@
             tasks = data;
             renderGantt();
             updateCounters();
-            alert("Importazione completata!");
+            alert("Caricamento completato!");
           } else {
-            alert("Il file JSON non contiene un array valido di task.");
+            alert("Il file JSON non contiene un array valido di task. Usare il portale gantt maker | by DF");
           }
         })
         .catch(error => {
-          alert("Errore nel caricamento JSON da URL: " + error);
-          console.error("Errore:", error);
+          console.error(error);
+          alert("Errore nel caricamento del file JSON.");
         });
-    }
-    
-    // Event listener per il caricamento da file locale
-    document.getElementById("importJsonButton").addEventListener("click", () => {
-      document.getElementById("importJsonInput").click();
-    });
-    document.getElementById("importJsonInput").addEventListener("change", importJSON);
-    
-    // Event listener per il caricamento da URL
-    document.getElementById("loadUrlButton").addEventListener("click", () => {
-      const url = document.getElementById("jsonUrlInput").value.trim();
-      if (url) {
-        importJSONFromUrl(url);
-      } else {
-        alert("Inserisci un URL valido.");
-      }
     });
     
-    // Event listener per i pulsanti Zoom
-    document.getElementById("zoomInButton").addEventListener("click", () => {
-      if (currentViewModeIndex > 0) {
-        currentViewModeIndex--;
-        renderGantt();
-      }
-    });
-    document.getElementById("zoomOutButton").addEventListener("click", () => {
-      if (currentViewModeIndex < viewModes.length - 1) {
-        currentViewModeIndex++;
-        renderGantt();
-      }
-    });
-    
-    // Gestione dell'evento beforeinstallprompt per mostrare il pulsante di installazione
+    // Gestione del prompt per installare la PWA
     let deferredPrompt;
     const installButton = document.getElementById('installButton');
     window.addEventListener('beforeinstallprompt', (e) => {
@@ -248,8 +229,8 @@
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
         navigator.serviceWorker.register('service-worker.js')
-          .then(reg => console.log('Service Worker registrato:', reg))
-          .catch(err => console.log('Errore nel Service Worker:', err));
+          .then(reg => console.log('SW registrato:', reg))
+          .catch(err => console.log('SW errore:', err));
       });
     }
   </script>
