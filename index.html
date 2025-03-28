@@ -4,13 +4,10 @@
   <meta charset="UTF-8">
   <title>Gantt Viewer | by DF</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <!-- Link al manifest per la PWA -->
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#ADC3D9">
-  <!-- Inclusione del CSS di Frappe Gantt -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/frappe-gantt/0.5.0/frappe-gantt.css">
   <style>
-    /* Stili base e responsive per il viewer */
     * { box-sizing: border-box; }
     body {
       margin: 0;
@@ -24,13 +21,16 @@
       text-align: center;
       font-size: 1.5em;
     }
-    .container {
-      padding: 20px;
-    }
+    .container { padding: 20px; }
     .import-section {
       margin-bottom: 20px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
     }
-    .import-section button {
+    .import-section button,
+    .import-section input[type="url"] {
       background-color: #ADC3D9;
       color: #fff;
       border: none;
@@ -39,10 +39,12 @@
       cursor: pointer;
       font-size: 1em;
     }
-    .import-section button:hover {
-      background-color: #8baabf;
+    .import-section button:hover { background-color: #8baabf; }
+    .import-section input[type="url"] {
+      flex: 1;
+      min-width: 250px;
+      color: #000;
     }
-    /* Box dei counter */
     .counters {
       margin-bottom: 20px;
       background-color: #fff;
@@ -51,7 +53,6 @@
       border-radius: 3px;
       font-size: 0.9em;
     }
-    /* Pulsanti Zoom */
     .zoom-btns {
       display: flex;
       gap: 10px;
@@ -67,17 +68,9 @@
       cursor: pointer;
       font-size: 0.9em;
     }
-    .zoom-btns button:hover {
-      background-color: #8baabf;
-    }
-    /* Contenitore per il Gantt */
-    .main {
-      overflow-x: auto;
-    }
-    #gantt {
-      margin-top: 20px;
-    }
-    /* Stili per il pulsante di installazione PWA */
+    .zoom-btns button:hover { background-color: #8baabf; }
+    .main { overflow-x: auto; }
+    #gantt { margin-top: 20px; }
     #installButton {
       position: fixed;
       bottom: 20px;
@@ -89,45 +82,36 @@
       border-radius: 5px;
       cursor: pointer;
       z-index: 1000;
-      display: none; /* Inizialmente nascosto */
+      display: none;
     }
   </style>
 </head>
 <body>
   <header>Gantt</header>
   <div class="container">
-    <!-- Sezione per l'importazione JSON -->
     <div class="import-section">
-      <button id="importJsonButton">Importa Gantt</button>
+      <!-- Caricamento da file locale -->
+      <button id="importJsonButton">Importa Gantt (File Locale)</button>
       <input type="file" id="importJsonInput" accept="application/json" style="display:none">
+      <!-- Caricamento da URL -->
+      <input type="url" id="jsonUrlInput" placeholder="Inserisci URL file JSON">
+      <button id="loadUrlButton">Carica da URL</button>
+      <!-- Pulsanti Zoom -->
       <button id="zoomInButton">Zoom In</button>
       <button id="zoomOutButton">Zoom Out</button>
     </div>
-    <!-- Box dei counter -->
-    <div class="counters" id="taskCounters">
-      <!-- I counter verranno aggiornati dinamicamente -->
-    </div>
-    <!-- Contenitore per il Gantt -->
-    <div class="main">
-      <div id="gantt"></div>
-    </div>
+    <div class="counters" id="taskCounters"></div>
+    <div class="main"><div id="gantt"></div></div>
   </div>
-  
-  <!-- Bottone di installazione PWA -->
   <button id="installButton">Installa App</button>
   
-  <!-- Inclusione delle librerie necessarie -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/frappe-gantt/0.5.0/frappe-gantt.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-  
   <script>
-    // Array globale per i task (inizialmente vuoto)
     let tasks = [];
-    // Variabile per la visualizzazione: "Day", "Week", "Month"
     const viewModes = ["Day", "Week", "Month"];
-    let currentViewModeIndex = 0; // Default: "Day"
-
-    // Funzione per renderizzare il Gantt con popup personalizzato che mostra le note
+    let currentViewModeIndex = 0;
+    
     function renderGantt() {
       document.getElementById("gantt").innerHTML = "";
       if (tasks.length > 0) {
@@ -137,20 +121,17 @@
           padding: 10,
           custom_popup_html: function(task) {
             const noteHtml = task.notes ? `<p><strong>Note:</strong> ${task.notes}</p>` : "";
-            return `
-              <div class="details-container" style="padding: 10px;">
-                <h5 style="margin: 0 0 5px;">${task.name}</h5>
-                <p><strong>Inizio:</strong> ${task.start} - <strong>Fine:</strong> ${task.end}</p>
-                <p><strong>Progress:</strong> ${task.progress}%</p>
-                ${noteHtml}
-              </div>
-            `;
+            return `<div style="padding: 10px;">
+                      <h5>${task.name}</h5>
+                      <p><strong>Inizio:</strong> ${task.start} - <strong>Fine:</strong> ${task.end}</p>
+                      <p><strong>Progress:</strong> ${task.progress}%</p>
+                      ${noteHtml}
+                    </div>`;
           }
         });
       }
     }
     
-    // Funzione per aggiornare i counter (numero attività, fine progetto, progress media)
     function updateCounters() {
       const counterDiv = document.getElementById("taskCounters");
       const totalTasks = tasks.length;
@@ -159,20 +140,16 @@
       tasks.forEach(task => {
         totalProgress += task.progress;
         const endDate = new Date(task.end);
-        if (!latestEnd || endDate > latestEnd) {
-          latestEnd = endDate;
-        }
+        if (!latestEnd || endDate > latestEnd) latestEnd = endDate;
       });
       const avgProgress = totalTasks ? Math.round(totalProgress / totalTasks) : 0;
       const endDateStr = latestEnd ? latestEnd.toLocaleDateString() : "N/A";
-      counterDiv.innerHTML = `
-        <strong>Totale Attività:</strong> ${totalTasks}<br>
-        <strong>Fine Progetto:</strong> ${endDateStr}<br>
-        <strong>Progress Media:</strong> ${avgProgress}%
-      `;
+      counterDiv.innerHTML = `<strong>Totale Attività:</strong> ${totalTasks}<br>
+                              <strong>Fine Progetto:</strong> ${endDateStr}<br>
+                              <strong>Progress Media:</strong> ${avgProgress}%`;
     }
     
-    // Funzione per importare il file JSON
+    // Funzione per importare JSON da file locale
     function importJSON(event) {
       const file = event.target.files[0];
       if (!file) return;
@@ -186,7 +163,7 @@
             updateCounters();
             alert("Importazione completata!");
           } else {
-            alert("Il file JSON non contiene un array valido di task. Usare il portale gantt maker | by DF");
+            alert("Il file JSON non contiene un array valido di task.");
           }
         } catch (err) {
           alert("Errore nella lettura del file JSON.");
@@ -195,19 +172,55 @@
       reader.readAsText(file);
     }
     
-    // Event listeners per l'importazione e per i pulsanti Zoom
-    document.getElementById("importJsonButton").addEventListener("click", function() {
+    // Funzione per importare JSON da URL
+    function importJSONFromUrl(url) {
+      fetch(url)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error("Network response was not ok");
+          }
+          return response.json();
+        })
+        .then(data => {
+          if (Array.isArray(data)) {
+            tasks = data;
+            renderGantt();
+            updateCounters();
+            alert("Importazione completata!");
+          } else {
+            alert("Il file JSON non contiene un array valido di task.");
+          }
+        })
+        .catch(error => {
+          alert("Errore nel caricamento JSON da URL: " + error);
+          console.error("Errore:", error);
+        });
+    }
+    
+    // Event listener per il caricamento da file locale
+    document.getElementById("importJsonButton").addEventListener("click", () => {
       document.getElementById("importJsonInput").click();
     });
     document.getElementById("importJsonInput").addEventListener("change", importJSON);
     
-    document.getElementById("zoomInButton").addEventListener("click", function() {
+    // Event listener per il caricamento da URL
+    document.getElementById("loadUrlButton").addEventListener("click", () => {
+      const url = document.getElementById("jsonUrlInput").value.trim();
+      if (url) {
+        importJSONFromUrl(url);
+      } else {
+        alert("Inserisci un URL valido.");
+      }
+    });
+    
+    // Event listener per i pulsanti Zoom
+    document.getElementById("zoomInButton").addEventListener("click", () => {
       if (currentViewModeIndex > 0) {
         currentViewModeIndex--;
         renderGantt();
       }
     });
-    document.getElementById("zoomOutButton").addEventListener("click", function() {
+    document.getElementById("zoomOutButton").addEventListener("click", () => {
       if (currentViewModeIndex < viewModes.length - 1) {
         currentViewModeIndex++;
         renderGantt();
@@ -218,19 +231,15 @@
     let deferredPrompt;
     const installButton = document.getElementById('installButton');
     window.addEventListener('beforeinstallprompt', (e) => {
-      e.preventDefault(); // Impedisce il prompt automatico
+      e.preventDefault();
       deferredPrompt = e;
-      // Mostra il pulsante di installazione
       installButton.style.display = 'block';
     });
-    
     installButton.addEventListener('click', async () => {
-      // Nasconde il pulsante una volta cliccato
       installButton.style.display = 'none';
       if (deferredPrompt) {
         deferredPrompt.prompt();
-        const { outcome } = await deferredPrompt.userChoice;
-        console.log(`Risposta dell'utente: ${outcome}`);
+        await deferredPrompt.userChoice;
         deferredPrompt = null;
       }
     });
@@ -239,16 +248,10 @@
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
         navigator.serviceWorker.register('service-worker.js')
-          .then(registration => {
-            console.log('Service Worker registrato con successo:', registration);
-          })
-          .catch(error => {
-            console.log('Registrazione del Service Worker fallita:', error);
-          });
+          .then(reg => console.log('Service Worker registrato:', reg))
+          .catch(err => console.log('Errore nel Service Worker:', err));
       });
     }
-    
-    // Inizializzazione: qui potresti caricare eventuali dati da localStorage se necessario
   </script>
 </body>
 </html>
