@@ -1,4 +1,4 @@
-const CACHE_NAME = 'gantt-cache-v2';
+const CACHE_NAME = 'gantt-cache-v1';
 const urlsToCache = [
   '/Gantt-vwr/',
   '/Gantt-vwr/index.html',
