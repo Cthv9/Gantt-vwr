@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <title>Gantt Viewer | by DF</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <!-- Link al manifest per la PWA, se necessario -->
+  <!-- Link al manifest per la PWA -->
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#ADC3D9">
   <!-- Inclusione del CSS di Frappe Gantt -->
@@ -77,6 +77,20 @@
     #gantt {
       margin-top: 20px;
     }
+    /* Stili per il pulsante di installazione PWA */
+    #installButton {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      padding: 10px;
+      background: #ADC3D9;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      z-index: 1000;
+      display: none; /* Inizialmente nascosto */
+    }
   </style>
 </head>
 <body>
@@ -86,23 +100,21 @@
     <div class="import-section">
       <button id="importJsonButton">Importa Gantt</button>
       <input type="file" id="importJsonInput" accept="application/json" style="display:none">
-	  <button id="zoomInButton">Zoom In</button>
+      <button id="zoomInButton">Zoom In</button>
       <button id="zoomOutButton">Zoom Out</button>
     </div>
     <!-- Box dei counter -->
     <div class="counters" id="taskCounters">
       <!-- I counter verranno aggiornati dinamicamente -->
     </div>
-    <!-- Pulsanti Zoom -spostati su->
-    <!div class="zoom-btns">
-      <!button id="zoomInButton"></button>
-      <!button id="zoomOutButton"></button>
-    </div>
     <!-- Contenitore per il Gantt -->
     <div class="main">
       <div id="gantt"></div>
     </div>
   </div>
+  
+  <!-- Bottone di installazione PWA -->
+  <button id="installButton">Installa App</button>
   
   <!-- Inclusione delle librerie necessarie -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/frappe-gantt/0.5.0/frappe-gantt.min.js"></script>
@@ -202,8 +214,41 @@
       }
     });
     
-    // Inizializzazione: se i dati sono già presenti in localStorage, potresti aggiungere qui una funzione per caricarli,
-    // oppure il viewer può funzionare solo con l'importazione manuale.
+    // Gestione dell'evento beforeinstallprompt per mostrare il pulsante di installazione
+    let deferredPrompt;
+    const installButton = document.getElementById('installButton');
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault(); // Impedisce il prompt automatico
+      deferredPrompt = e;
+      // Mostra il pulsante di installazione
+      installButton.style.display = 'block';
+    });
+    
+    installButton.addEventListener('click', async () => {
+      // Nasconde il pulsante una volta cliccato
+      installButton.style.display = 'none';
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        console.log(`Risposta dell'utente: ${outcome}`);
+        deferredPrompt = null;
+      }
+    });
+    
+    // Registrazione del Service Worker
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('service-worker.js')
+          .then(registration => {
+            console.log('Service Worker registrato con successo:', registration);
+          })
+          .catch(error => {
+            console.log('Registrazione del Service Worker fallita:', error);
+          });
+      });
+    }
+    
+    // Inizializzazione: qui potresti caricare eventuali dati da localStorage se necessario
   </script>
 </body>
 </html>
