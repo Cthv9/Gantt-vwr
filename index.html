@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <title>Gantt Viewer | by DF</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="icons/favicon.ico" type="image/png">
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#ADC3D9">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/frappe-gantt/0.5.0/frappe-gantt.css">
@@ -84,17 +85,6 @@
       <button id="zoomInButton">Zoom In</button>
       <button id="zoomOutButton">Zoom Out</button>
     </div>
-    <!-- Sezione per caricare JSON dalla cartella "Gantt" -->
-    <!--div class="select-section">
-      <label for="jsonSelect">Carica Gantt da file:</label>
-      <select id="jsonSelect">
-        <option value="">Seleziona un file JSON</option>
-        <option value="gantt-progetto-a.json">Gantt Progetto A</option>
-        <option value="gantt-progetto-b.json">Gantt Progetto B</option>
-        <!-- Aggiungi altre opzioni se necessario"--">
-      </select>
-      <button id="loadJsonButton">Carica</button>
-    </div-->
     <!-- Box dei counter -->
     <div class="counters" id="taskCounters"></div>
     <!-- Contenitore per il Gantt -->
@@ -185,38 +175,6 @@
     });
     document.getElementById("zoomOutButton").addEventListener("click", () => {
       if (currentViewModeIndex < viewModes.length - 1) { currentViewModeIndex++; renderGantt(); }
-    });
-    
-    // Caricamento JSON dalla cartella "Gantt" tramite il menu a tendina
-    document.getElementById("loadJsonButton").addEventListener("click", () => {
-      const select = document.getElementById("jsonSelect");
-      const selectedFile = select.value;
-      if (!selectedFile) {
-        alert("Seleziona un file JSON!");
-        return;
-      }
-      // Effettua il fetch dal percorso "Gantt/<nome_file>"
-      fetch('Gantt/' + selectedFile)
-        .then(response => {
-          if (!response.ok) {
-            throw new Error("Errore nel recuperare il file: " + response.statusText);
-          }
-          return response.json();
-        })
-        .then(data => {
-          if (Array.isArray(data)) {
-            tasks = data;
-            renderGantt();
-            updateCounters();
-            alert("Caricamento completato!");
-          } else {
-            alert("Il file JSON non contiene un array valido di task. Usare il portale gantt maker | by DF");
-          }
-        })
-        .catch(error => {
-          console.error(error);
-          alert("Errore nel caricamento del file JSON.");
-        });
     });
     
     // Gestione del prompt per installare la PWA
