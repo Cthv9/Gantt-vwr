@@ -65,6 +65,13 @@
       z-index: 1000;
       display: none;
     }
+    .footer-text {
+      position: absolute;
+      bottom: 10px;
+      right: 10px;
+      color: rgba(0, 0, 0, 0.5);
+      font-size: 14px;
+    }
   </style>
 </head>
 <body>
@@ -94,6 +101,9 @@
     <div class="main"><div id="gantt"></div></div>
   </div>
   <button id="installButton">Installa App</button>
+  <div class="footer-text">
+    Made with ❤️ by FD
+  </div>
   
   <!-- Inclusione delle librerie necessarie -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/frappe-gantt/0.5.0/frappe-gantt.min.js"></script>
@@ -185,7 +195,7 @@
         alert("Seleziona un file JSON!");
         return;
       }
-      // Fetch dal percorso "Gantt/<nome_file>"
+      // Effettua il fetch dal percorso "Gantt/<nome_file>"
       fetch('Gantt/' + selectedFile)
         .then(response => {
           if (!response.ok) {
