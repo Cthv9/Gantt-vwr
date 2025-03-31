@@ -1,0 +1,12 @@
+[
+  {
+    "id": "Task1",
+    "name": "tempistiche da definire",
+    "start": "2025-03-03",
+    "end": "2025-03-03",
+    "progress": 00,
+    "dependencies": [],
+    "_start": "2025-03-02T23:00:00.000Z",
+    "_end": "2025-03-03T23:00:00.000Z",
+    "_index": 0
+  },

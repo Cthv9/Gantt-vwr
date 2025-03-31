@@ -1,0 +1,160 @@
+[
+  {
+    "id": "Task1",
+    "name": "Disegno di ingombro Converter E2C",
+    "start": "2025-03-03",
+    "end": "2025-03-03",
+    "progress": 80,
+    "dependencies": [],
+    "_start": "2025-03-02T23:00:00.000Z",
+    "_end": "2025-03-03T23:00:00.000Z",
+    "_index": 0
+  },
+  {
+    "id": "Task2",
+    "name": "Disegno di ingombro Converter ComAp",
+    "start": "2025-03-03",
+    "end": "2025-03-03",
+    "progress": 80,
+    "dependencies": [],
+    "_start": "2025-03-02T23:00:00.000Z",
+    "_end": "2025-03-03T23:00:00.000Z",
+    "_index": 1,
+    "resource": "",
+    "notes": ""
+  },
+  {
+    "id": "Task3",
+    "name": "Specifica tecnica preliminare E2C",
+    "start": "2025-03-10",
+    "end": "2025-03-10",
+    "progress": 80,
+    "dependencies": [],
+    "_start": "2025-03-09T23:00:00.000Z",
+    "_end": "2025-03-10T23:00:00.000Z",
+    "_index": 2
+  },
+  {
+    "id": "Task4",
+    "name": "Specifica tecnica preliminare ComAp",
+    "start": "2025-03-10",
+    "end": "2025-03-10",
+    "progress": 50,
+    "dependencies": [],
+    "_start": "2025-03-09T23:00:00.000Z",
+    "_end": "2025-03-10T23:00:00.000Z",
+    "_index": 3,
+    "resource": "",
+    "notes": ""
+  },
+  {
+    "id": "Task5",
+    "name": "Rilascio SW Converter E2C",
+    "start": "2025-04-07",
+    "end": "2025-04-07",
+    "progress": 0,
+    "dependencies": [],
+    "_start": "2025-04-06T22:00:00.000Z",
+    "_end": "2025-04-07T22:00:00.000Z",
+    "_index": 4,
+    "resource": "E2C",
+    "notes": ""
+  },
+  {
+    "id": "Task6",
+    "name": "Consegna quadro OPMS ComAp",
+    "start": "2025-04-07",
+    "end": "2025-04-07",
+    "progress": 0,
+    "dependencies": [],
+    "_start": "2025-04-06T22:00:00.000Z",
+    "_end": "2025-04-07T22:00:00.000Z",
+    "_index": 5,
+    "resource": "COMAP",
+    "notes": "Rilascio HW - Sviluppo SW in progress"
+  },
+  {
+    "id": "Task7",
+    "name": "Avvio test presso E2C ",
+    "start": "2025-04-14",
+    "end": "2025-05-07",
+    "progress": 0,
+    "dependencies": [
+      "Task5"
+    ],
+    "_start": "2025-04-13T22:00:00.000Z",
+    "_end": "2025-05-07T22:00:00.000Z",
+    "_index": 6,
+    "resource": "E2C",
+    "notes": "Test con gruppo non Kohler e batterie DEMO"
+  },
+  {
+    "id": "Task8",
+    "name": "Test Kohler presso E2C",
+    "start": "2025-05-07",
+    "end": "2025-05-21",
+    "progress": 0,
+    "dependencies": [
+      "Task7"
+    ],
+    "_start": "2025-05-06T22:00:00.000Z",
+    "_end": "2025-05-21T22:00:00.000Z",
+    "_index": 7,
+    "resource": "E2C",
+    "notes": "Test con generatore Kohler"
+  },
+  {
+    "id": "Task9",
+    "name": "Avvio test presso SAIM",
+    "start": "2025-05-21",
+    "end": "2025-06-30",
+    "progress": 0,
+    "dependencies": [
+      "Task8"
+    ],
+    "_start": "2025-05-20T22:00:00.000Z",
+    "_end": "2025-06-30T22:00:00.000Z",
+    "_index": 8,
+    "resource": "Santucci",
+    "notes": "Allestimento sala prove + test"
+  },
+  {
+    "id": "Task10",
+    "name": "Completamento test e rilascio specifiche tecniche definitive",
+    "start": "2025-04-14",
+    "end": "2025-06-30",
+    "progress": 0,
+    "dependencies": [],
+    "_start": "2025-04-13T22:00:00.000Z",
+    "_end": "2025-06-30T22:00:00.000Z",
+    "_index": 9
+  },
+  {
+    "id": "Task11",
+    "name": "Visita E2C",
+    "start": "2025-04-22",
+    "end": "2025-04-22",
+    "progress": 0,
+    "dependencies": [
+      "Task12"
+    ],
+    "_start": "2025-04-21T22:00:00.000Z",
+    "_end": "2025-04-22T22:00:00.000Z",
+    "_index": 10,
+    "resource": "FUMIA + FABBRI",
+    "notes": "PROPOSTA DA DEFINIRE"
+  },
+  {
+    "id": "Task12",
+    "name": "Consegna Gruppo",
+    "start": "2025-04-07",
+    "end": "2025-04-07",
+    "progress": 0,
+    "dependencies": [],
+    "resource": "FABBRI / ZONI",
+    "notes": "Consegnare un 35kw a E2C",
+    "_start": "2025-04-06T22:00:00.000Z",
+    "_end": "2025-04-07T22:00:00.000Z",
+    "_index": 11
+  }
+]

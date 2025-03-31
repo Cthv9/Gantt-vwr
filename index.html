@@ -68,7 +68,7 @@
   </style>
 </head>
 <body>
-  <header>Gantt Viewer | by DF</header>
+  <header>Gantt progetti Service Marine</header>
   <div class="container">
     <!-- Sezione per importazione locale -->
     <div class="import-section">
@@ -77,13 +77,13 @@
       <button id="zoomInButton">Zoom In</button>
       <button id="zoomOutButton">Zoom Out</button>
     </div>
-    <!-- Nuova sezione per caricare JSON dalla repository -->
+    <!-- Sezione per caricare JSON dalla cartella "Gantt" -->
     <div class="select-section">
       <label for="jsonSelect">Carica Gantt da file:</label>
       <select id="jsonSelect">
         <option value="">Seleziona un file JSON</option>
-        <option value="OPMS.json">Gantt Progetto OPMS</option>
-        <option value="IOT.json">Gantt Progetto IoT</option>
+        <option value="OPMS.json">Gantt OPMS</option>
+        <option value="IOT.json">Gantt IoT</option>
         <!-- Aggiungi altre opzioni se necessario -->
       </select>
       <button id="loadJsonButton">Carica</button>
@@ -177,7 +177,7 @@
       if (currentViewModeIndex < viewModes.length - 1) { currentViewModeIndex++; renderGantt(); }
     });
     
-    // Caricamento JSON dalla repository tramite il menu a tendina
+    // Caricamento JSON dalla cartella "Gantt" tramite il menu a tendina
     document.getElementById("loadJsonButton").addEventListener("click", () => {
       const select = document.getElementById("jsonSelect");
       const selectedFile = select.value;
@@ -185,7 +185,8 @@
         alert("Seleziona un file JSON!");
         return;
       }
-      fetch(selectedFile)
+      // Fetch dal percorso "Gantt/<nome_file>"
+      fetch('Gantt/' + selectedFile)
         .then(response => {
           if (!response.ok) {
             throw new Error("Errore nel recuperare il file: " + response.statusText);
