@@ -57,6 +57,7 @@
       bottom: 20px;
       right: 20px;
       padding: 10px;
+	  padding-bottom: 50px; /* spazio per il footer, regola in base alle necessità */
       background: #ADC3D9;
       color: white;
       border: none;
@@ -65,13 +66,17 @@
       z-index: 1000;
       display: none;
     }
-    .footer-text {
-      position: absolute;
-      bottom: 10px;
-      right: 10px;
-      color: rgba(0, 0, 0, 0.5);
-      font-size: 8px;
-    }
+	.footer-text {
+	  position: fixed;
+	  bottom: 0;
+	  left: 0;
+	  width: 100%;
+	  text-align: right;
+	  padding: 10px 0;
+	  background-color: #f5f5f5; /* o il colore che preferisci */
+	  color: rgba(0, 0, 0, 0.5);
+	  font-size: 6px;
+	}
   </style>
 </head>
 <body>
@@ -85,16 +90,16 @@
       <button id="zoomOutButton">Zoom Out</button>
     </div>
     <!-- Sezione per caricare JSON dalla cartella "Gantt" -->
-    <!--div class="select-section">
+    <div class="select-section">
       <label for="jsonSelect">Carica Gantt da file:</label>
       <select id="jsonSelect">
         <option value="">Seleziona un file JSON</option>
-        <option value="gantt-progetto-a.json">Gantt Progetto A</option>
-        <option value="gantt-progetto-b.json">Gantt Progetto B</option>
-        <!-- Aggiungi altre opzioni se necessario"--">
+        <option value="OPMS.json">Gantt OPMS</option>
+        <option value="IOT.json">Gantt IoT</option>
+        <!-- Aggiungi altre opzioni se necessario -->
       </select>
       <button id="loadJsonButton">Carica</button>
-    </div-->
+    </div>
     <!-- Box dei counter -->
     <div class="counters" id="taskCounters"></div>
     <!-- Contenitore per il Gantt -->
